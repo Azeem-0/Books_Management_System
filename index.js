@@ -1,13 +1,12 @@
 const express = require('express');
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const ejs = require("ejs");
 const app = express();
 const path = require('path')
 const PORT = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname + "/public")));
-app.set('view engine', 'ejs');
-app.set("views", path.join(__dirname + "/public/views"));
+app.set("view engine", "ejs");
+app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 //mongoose connection 
 mongoose.connect("mongodb+srv://sathishsara1007:Sathish%40111@cluster0.f5vy3xz.mongodb.net/Nexus").then(() => {
@@ -87,3 +86,34 @@ app.listen(PORT, () => {
 })
 
 // document.getElementById("q1").
+
+
+const books = [
+    {
+        heading: "SO and so - 1",
+        desc: "Lorem Epsum Sathish gadu Gypsum",
+        pages: "420"
+    },
+    {
+        heading: "Tambulam tadanantharam",
+        desc: "Chinthapandu rasam Sathish gadu Awesome",
+        pages: "420"
+    },
+    {
+        heading: "New Book - 1",
+        desc: "Description for New Book - 1",
+        pages: "200"
+    },
+];
+
+for (let i = 3; i < 30; i++) {
+    books.push({
+        heading: `Book - ${i}`,
+        desc: `Description for Book - ${i}`,
+        pages: `${Math.floor(Math.random() * 500) + 100}`
+    });
+}
+
+app.get("/getBooks",(req,res)=>{
+    res.render("books",{bookdata:books});
+});

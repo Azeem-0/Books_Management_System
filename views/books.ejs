@@ -1,0 +1,11 @@
+<%- include("header"); -%>
+<div id="books-cont">
+    <% for (let i = 0; i < bookdata.length; i++) { %>
+        <div class="book-card">
+            <h2><%= bookdata[i].heading %></h2>
+            <p><%= bookdata[i].desc %></p>
+            <p>Pages: <%= bookdata[i].pages %></p>
+        </div>
+    <% } %>
+</div>
+<%- include("footer"); -%>

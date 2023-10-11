@@ -40,6 +40,10 @@ const bookSchema = new mongoose.Schema({
     pages: {
         type: Number,
         required: true
+    },
+    bookLink: {
+        type: String,
+        required: true
     }
 });
 const bookModel = mongoose.model("books", bookSchema);
@@ -127,11 +131,12 @@ app.post("/login", async (req, res) => {
 
 app.post("/postBooks", async (req, res) => {
     try {
-        const { title, description, pages } = req.body;
+        const { title, description, pages, bookLink } = req.body;
         const newBook = new bookModel({
             title: title,
             description: description,
-            pages: pages
+            pages: pages,
+            bookLink: bookLink
         })
         await newBook.save();
     }

@@ -28,6 +28,21 @@ const userSchema = new mongoose.Schema({
         required: true
     },
 });
+const bookSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    pages: {
+        type: Number,
+        required: true
+    }
+});
+const bookModel = mongoose.model("books", bookSchema);
 const userModel = mongoose.model("users", userSchema);
 app.get('/', (req, res) => {
     res.render("home", { result: "HELLO" })
@@ -48,7 +63,7 @@ app.get("/store", (req, res) => {
     res.render("store")
 })
 app.post("/register", async (req, res) => {
-    const { email, name, password } = req.body;
+    const { email, name, password, collegeName } = req.body;
     const user = await userModel.findOne({ email: email });
     if (user) {
         res.render('login', { result: "Already Registered! Please Login" });
@@ -57,7 +72,8 @@ app.post("/register", async (req, res) => {
         const newUser = new userModel({
             email: email,
             password: password,
-            name: name
+            name: name,
+            collegeName: collegeName
         });
         newUser.save();
         res.render("login", { result: "Successfully Registerd! Please Login" });
@@ -81,39 +97,59 @@ app.post("/login", async (req, res) => {
     }
 })
 
-app.listen(PORT, () => {
-    console.log("Listening!");
+
+// const books = [
+//     {
+//         heading: "SO and so - 1",
+//         desc: "Lorem Epsum Sathish gadu Gypsum",
+//         pages: "420"
+//     },
+//     {
+//         heading: "Tambulam tadanantharam",
+//         desc: "Chinthapandu rasam Sathish gadu Awesome",
+//         pages: "420"
+//     },
+//     {
+//         heading: "New Book - 1",
+//         desc: "Description for New Book - 1",
+//         pages: "200"
+//     },
+// ];
+
+
+// for (let i = 3; i < 30; i++) {
+//     books.push({
+//         heading: `Book - ${i}`,
+//         desc: `Description for Book - ${i}`,
+//         pages: `${Math.floor(Math.random() * 500) + 100}`
+//     });
+// }
+
+app.post("/postBooks", async (req, res) => {
+    try {
+        const { title, description, pages } = req.body;
+        const newBook = new bookModel({
+            title: title,
+            description: description,
+            pages: pages
+        })
+        await newBook.save();
+    }
+    catch (err) {
+        res.status(500);
+    }
 })
 
-// document.getElementById("q1").
-
-
-const books = [
-    {
-        heading: "SO and so - 1",
-        desc: "Lorem Epsum Sathish gadu Gypsum",
-        pages: "420"
-    },
-    {
-        heading: "Tambulam tadanantharam",
-        desc: "Chinthapandu rasam Sathish gadu Awesome",
-        pages: "420"
-    },
-    {
-        heading: "New Book - 1",
-        desc: "Description for New Book - 1",
-        pages: "200"
-    },
-];
-
-for (let i = 3; i < 30; i++) {
-    books.push({
-        heading: `Book - ${i}`,
-        desc: `Description for Book - ${i}`,
-        pages: `${Math.floor(Math.random() * 500) + 100}`
-    });
-}
-
-app.get("/getBooks",(req,res)=>{
-    res.render("books",{bookdata:books});
+app.get("/getBooks", async (req, res) => {
+    try {
+        const books = await bookModel.find({});
+        res.render("books", { bookdata: books })
+    }
+    catch (err) {
+        console.err(err);
+    }
 });
+
+app.listen(PORT, () => {
+    console.log("Listening!", PORT);
+})
